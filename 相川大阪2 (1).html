@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>相川駅 発車案内（梅田・天下茶屋方面）</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #000;
+      color: #0f0;
+      text-align: center;
+      padding: 30px;
+    }
+    .display {
+      font-size: 2em;
+      margin: 50px auto;
+      width: 80%;
+    }
+    .time {
+      font-size: 4em;
+    }
+    .date {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>相川駅 発車案内（梅田・天下茶屋方面／平日）</h1>
+  <div class="date" id="today"></div>
+  <div class="display">
+    <span id="message">次は <span id="dest">--</span> 行き<br>
+    発車まで <span id="countdown" class="time">--</span></span>
+  </div>
+
+  <script>
+    const schedule = [
+      {h:4,m:41,d:"大阪梅田"},{h:4,m:48,d:"大阪梅田"},
+      {h:5,m:5,d:"大阪梅田"},{h:5,m:19,d:"天下茶屋"},{h:5,m:27,d:"大阪梅田"},
+      {h:5,m:39,d:"天下茶屋"},{h:5,m:46,d:"大阪梅田"},{h:5,m:52,d:"天下茶屋"},
+      {h:6,m:5,d:"大阪梅田"},{h:6,m:7,d:"天下茶屋"},{h:6,m:15,d:"大阪梅田"},
+      {h:6,m:25,d:"天下茶屋"},{h:6,m:28,d:"大阪梅田"},{h:6,m:33,d:"大阪梅田"},
+      {h:6,m:39,d:"大阪梅田"},{h:6,m:43,d:"天下茶屋"},{h:6,m:47,d:"大阪梅田"},
+      {h:6,m:52,d:"天下茶屋"},{h:6,m:55,d:"大阪梅田"},
+      {h:7,m:2,d:"天下茶屋"},{h:7,m:7,d:"大阪梅田"},{h:7,m:13,d:"天下茶屋"},
+      {h:7,m:16,d:"大阪梅田"},{h:7,m:20,d:"天下茶屋"},{h:7,m:25,d:"大阪梅田"},
+      {h:7,m:32,d:"大阪梅田"},{h:7,m:34,d:"大阪梅田"},{h:7,m:37,d:"天下茶屋"},
+      {h:7,m:43,d:"大阪梅田"},{h:7,m:47,d:"天下茶屋"},{h:7,m:52,d:"大阪梅田"},
+      {h:7,m:55,d:"天下茶屋"},
+      {h:8,m:1,d:"大阪梅田"},{h:8,m:10,d:"大阪梅田"},{h:8,m:13,d:"天下茶屋"},
+      {h:8,m:19,d:"大阪梅田"},{h:8,m:28,d:"大阪梅田"},{h:8,m:31,d:"天下茶屋"},
+      {h:8,m:36,d:"大阪梅田"},{h:8,m:46,d:"大阪梅田"},{h:8,m:49,d:"大阪梅田"},
+      {h:8,m:54,d:"天下茶屋"},
+      {h:9,m:4,d:"大阪梅田"},{h:9,m:10,d:"天下茶屋"},{h:9,m:20,d:"天下茶屋"},
+      {h:9,m:30,d:"大阪梅田"},{h:9,m:40,d:"天下茶屋"},{h:9,m:50,d:"大阪梅田"},
+      {h:10,m:1,d:"天下茶屋"},{h:10,m:10,d:"大阪梅田"},{h:10,m:21,d:"天下茶屋"},
+      {h:10,m:32,d:"大阪梅田"},{h:10,m:41,d:"天下茶屋"},{h:10,m:51,d:"大阪梅田"},
+      {h:11,m:1,d:"天下茶屋"},{h:11,m:11,d:"大阪梅田"},{h:11,m:21,d:"天下茶屋"},
+      {h:11,m:31,d:"大阪梅田"},{h:11,m:41,d:"天下茶屋"},{h:11,m:51,d:"大阪梅田"},
+      {h:12,m:1,d:"天下茶屋"},{h:12,m:11,d:"大阪梅田"},{h:12,m:21,d:"天下茶屋"},
+      {h:12,m:31,d:"大阪梅田"},{h:12,m:41,d:"天下茶屋"},{h:12,m:51,d:"大阪梅田"},
+      {h:13,m:1,d:"天下茶屋"},{h:13,m:11,d:"大阪梅田"},{h:13,m:21,d:"天下茶屋"},
+      {h:13,m:31,d:"大阪梅田"},{h:13,m:41,d:"天下茶屋"},{h:13,m:51,d:"大阪梅田"},
+      {h:14,m:1,d:"天下茶屋"},{h:14,m:11,d:"大阪梅田"},{h:14,m:21,d:"天下茶屋"},
+      {h:14,m:31,d:"大阪梅田"},{h:14,m:41,d:"天下茶屋"},{h:14,m:51,d:"大阪梅田"},
+      {h:15,m:1,d:"天下茶屋"},{h:15,m:11,d:"大阪梅田"},{h:15,m:17,d:"天下茶屋"},
+      {h:15,m:21,d:"天下茶屋"},{h:15,m:27,d:"天下茶屋"},{h:15,m:31,d:"大阪梅田"},
+      {h:15,m:41,d:"天下茶屋"},{h:15,m:51,d:"大阪梅田"},{h:15,m:56,d:"天下茶屋"},
+      {h:16,m:1,d:"天下茶屋"},{h:16,m:10,d:"大阪梅田"},{h:16,m:21,d:"天下茶屋"},
+      {h:16,m:31,d:"大阪梅田"},{h:16,m:40,d:"天下茶屋"},{h:16,m:51,d:"大阪梅田"},
+      {h:17,m:0,d:"天下茶屋"},{h:17,m:10,d:"大阪梅田"},{h:17,m:20,d:"天下茶屋"},
+      {h:17,m:28,d:"天下茶屋"},{h:17,m:32,d:"大阪梅田"},{h:17,m:38,d:"大阪梅田"},
+      {h:17,m:48,d:"天下茶屋"},{h:17,m:53,d:"大阪梅田"},{h:17,m:58,d:"大阪梅田"},
+      {h:18,m:9,d:"天下茶屋"},{h:18,m:14,d:"大阪梅田"},{h:18,m:19,d:"大阪梅田"},
+      {h:18,m:28,d:"天下茶屋"},{h:18,m:33,d:"大阪梅田"},{h:18,m:39,d:"大阪梅田"},
+      {h:18,m:48,d:"天下茶屋"},{h:18,m:53,d:"大阪梅田"},{h:18,m:59,d:"大阪梅田"},
+      {h:19,m:9,d:"天下茶屋"},{h:19,m:14,d:"大阪梅田"},{h:19,m:19,d:"大阪梅田"},
+      {h:19,m:28,d:"天下茶屋"},{h:19,m:33,d:"大阪梅田"},{h:19,m:38,d:"大阪梅田"},
+      {h:19,m:48,d:"天下茶屋"},{h:19,m:53,d:"大阪梅田"},{h:19,m:59,d:"大阪梅田"},
+      {h:20,m:8,d:"天下茶屋"},{h:20,m:13,d:"大阪梅田"},{h:20,m:19,d:"大阪梅田"},
+      {h:20,m:29,d:"大阪梅田"},{h:20,m:33,d:"大阪梅田"},{h:20,m:38,d:"大阪梅田"},
+      {h:20,m:49,d:"天下茶屋"},
+      {h:21,m:0,d:"大阪梅田"},{h:21,m:8,d:"大阪梅田"},{h:21,m:13,d:"大阪梅田"},
+      {h:21,m:19,d:"大阪梅田"},{h:21,m:25,d:"大阪梅田"},{h:21,m:30,d:"天下茶屋"},
+      {h:21,m:35,d:"大阪梅田"},{h:21,m:38,d:"天下茶屋"},{h:21,m:47,d:"大阪梅田"},
+      {h:21,m:57,d:"天下茶屋"},
+      {h:22,m:0,d:"大阪梅田"},{h:22,m:8,d:"大阪梅田"},{h:22,m:13,d:"大阪梅田"},
+      {h:22,m:23,d:"大阪梅田"},{h:22,m:26,d:"大阪梅田"},{h:22,m:37,d:"大阪梅田"},
+      {h:22,m:43,d:"大阪梅田"},{h:22,m:57,d:"大阪梅田"},
+      {h:23,m:12,d:"大阪梅田"},{h:23,m:25,d:"大阪梅田"},{h:23,m:40,d:"大阪梅田"},
+      {h:23,m:55,d:"大阪梅田"}
+    ];
+
+    function updateDisplay() {
+      const now = new Date();
+      const day = now.getDay(); // 0 = 日曜, 6 = 土曜
+      const todayStr = now.toLocaleDateString("ja-JP", {
+        year: "numeric", month: "2-digit", day: "2-digit", weekday: "long"
+      });
+      document.getElementById("today").textContent = `今日は ${todayStr}`;
+
+      const elDest = document.getElementById("dest");
+      const elCount = document.getElementById("countdown");
+      const elMsg = document.getElementById("message");
+
+      if (day === 0 || day === 6) {
+        elMsg.innerHTML = `<span style="color:red;">休日ダイヤ非対応</span>`;
+        return;
+      }
+
+      const curSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+      let next = null;
+
+      for (const t of schedule) {
+        const schedSec = t.h * 3600 + t.m * 60;
+        if (schedSec >= curSec) {
+          next = t;
+          break;
+        }
+      }
+
+      if (next) {
+        const nextSec = next.h * 3600 + next.m * 60;
+        const diffSec = nextSec - curSec;
+        const min = Math.floor(diffSec / 60);
+        const sec = diffSec % 60;
+        elDest.textContent = next.d;
+        elCount.textContent = `${min}分${sec}秒`;
+      } else {
+        elDest.textContent = "本日の運行終了";
+        elCount.textContent = "--";
+      }
+    }
+
+    updateDisplay();
+    setInterval(updateDisplay, 1000);
+  </script>
+</body>
+</html>
